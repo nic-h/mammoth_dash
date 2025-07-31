@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Chart from "./Chart";
 import TimeRangeSelector from "./TimeRangeSelector";
 import CurrencyToggle from "./CurrencyToggle";
@@ -8,36 +8,50 @@ export default function ChartWrapper({ data }) {
   const [currency, setCurrency] = useState("TIA");
   const rate = 2.0;
 
-  const now = Date.now();
+  // Debug: Log when state changes
+  console.log("Current range:", range);
+  console.log("Current currency:", currency);
 
-  const filtered = data.filter((d) => {
-    const ts = d.timestamp || new Date(d.date).getTime();
-    if (range === "1W") return now - ts <= 7 * 86400000;
-    if (range === "1M") return now - ts <= 30 * 86400000;
-    if (range === "3M") return now - ts <= 90 * 86400000;
-    return true;
-  });
-
-  const mapped = filtered.map((d) => {
-    if (currency === "USD") {
-      return {
-        ...d,
-        floor: d.floor * rate,
-        avg: d.avg * rate,
-        vol: d.vol * rate,
-      };
+  const processedData = useMemo(() => {
+    if (!data || data.length === 0) return [];
+    
+    const now = Date.now();
+    
+    // Filter by time range
+    let filtered = [...data];
+    
+    if (range !== "ALL") {
+      const days = range === "1W" ? 7 : range === "1M" ? 30 : 90;
+      const cutoffTime = now - (days * 24 * 60 * 60 * 1000);
+      filtered = data.filter((d) => d.timestamp >= cutoffTime);
+      console.log(`Filtered to ${range}: ${filtered.length} data points from ${data.length}`);
     }
-    return d;
-  });
+
+    // Apply currency conversion
+    const result = filtered.map((d) => {
+      if (currency === "USD") {
+        return {
+          ...d,
+          floor: d.floor * rate,
+          avg: d.avg * rate,
+          vol: d.vol * rate,
+        };
+      }
+      return d;
+    });
+
+    console.log("Processed data:", result.length, "points");
+    return result;
+  }, [data, range, currency]);
 
   return (
-    <div className="w-full h-full flex flex-col gap-2 p-2">
-      <div className="flex justify-between items-center mb-2">
+    <div className="w-full h-full flex flex-col">
+      <div className="flex justify-between items-center p-2 border-b border-green-800">
         <CurrencyToggle currency={currency} setCurrency={setCurrency} />
         <TimeRangeSelector range={range} onSelect={setRange} />
       </div>
-      <div className="flex-1">
-        <Chart data={mapped} currency={currency} />
+      <div className="flex-1 min-h-0">
+        <Chart data={processedData} currency={currency} />
       </div>
     </div>
   );

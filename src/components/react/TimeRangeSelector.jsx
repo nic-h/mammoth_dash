@@ -5,10 +5,10 @@ export default function TimeRangeSelector({ range, onSelect }) {
       {options.map((label) => (
         <button
           key={label}
-          className={`border px-2 py-1 text-xs font-bold transition ${
+          className={`border px-2 py-1 text-xs font-bold transition hover:bg-green-700 hover:text-black ${
             range === label
               ? "bg-green-700 text-black border-green-700"
-              : "text-green-400 border-green-700"
+              : "text-green-400 border-green-700 bg-black"
           }`}
           onClick={() => onSelect(label)}
         >

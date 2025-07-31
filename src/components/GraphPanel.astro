@@ -6,6 +6,7 @@ type ActivityEvent = {
   orderType: string;
   price: string;
   timestamp: number;
+  tokenId?: string;
 };
 
 type DayStats = {
@@ -23,6 +24,7 @@ const events = (await res.json()) as ActivityEvent[];
 
 const filtered = events.filter((e) => e.event === "TAKE" && e.orderType === "SELL");
 
+// Group by day
 const buckets: Record<string, ActivityEvent[]> = {};
 for (const e of filtered) {
   const date = new Date(e.timestamp * 1000).toISOString().split("T")[0];
@@ -30,15 +32,22 @@ for (const e of filtered) {
   buckets[date].push(e);
 }
 
-const allData: DayStats[] = Object.entries(buckets).map(([date, txs]) => {
-  const prices = txs.map((t) => Number(t.price) / 1e18);
-  const floor = Math.min(...prices);
-  const avg = prices.reduce((a, b) => a + b, 0) / prices.length;
-  const vol = prices.reduce((a, b) => a + b, 0);
-  const count = prices.length;
-  const timestamp = txs[0].timestamp * 1000;
-  return { date, timestamp, floor, avg, vol, count };
-});
+// Process data
+const allData: DayStats[] = Object.entries(buckets)
+  .map(([date, txs]) => {
+    const prices = txs.map((t) => Number(t.price) / 1e18);
+    if (prices.length === 0) return null;
+    
+    const floor = Math.min(...prices);
+    const avg = prices.reduce((a, b) => a + b, 0) / prices.length;
+    const vol = prices.reduce((a, b) => a + b, 0);
+    const count = prices.length;
+    const timestamp = new Date(date).getTime();
+    
+    return { date, timestamp, floor, avg, vol, count };
+  })
+  .filter(Boolean)
+  .sort((a, b) => a.timestamp - b.timestamp);
 ---
 
-<ChartWrapper client:load data={allData} />
+<ChartWrapper client:only="react" data={allData} />

@@ -5,10 +5,10 @@ export default function CurrencyToggle({ currency, setCurrency }) {
         <button
           key={unit}
           onClick={() => setCurrency(unit)}
-          className={`border px-2 py-1 text-xs font-bold transition ${
+          className={`border px-2 py-1 text-xs font-bold transition hover:bg-green-700 hover:text-black ${
             currency === unit
               ? "bg-green-700 text-black border-green-700"
-              : "text-green-400 border-green-700"
+              : "text-green-400 border-green-700 bg-black"
           }`}
         >
           {unit}

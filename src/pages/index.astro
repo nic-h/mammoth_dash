@@ -9,52 +9,68 @@ import HoldersTable from "../components/HoldersTable.astro";
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Mammoths Dash</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MAMMOTH TERMINAL v2.0</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
     <script>
+      // Auto-refresh every 5 minutes
       setInterval(() => {
         location.reload();
-      }, 5 * 60 * 1000); // 5 minutes
+      }, 5 * 60 * 1000);
     </script>
   </head>
   <body>
-    <div class="terminal p-2">
+    <div class="terminal">
       <!-- HEADER -->
-      <div class="border border-terminal-border text-center mb-2 p-2">
-        <h1 class="text-xl font-bold text-terminal-text tracking-wider">
-          MAMMOTH DASHBOARD v2.0
+      <div class="border border-green-500 text-center mb-4 p-3 bg-black">
+        <h1 class="text-lg font-bold text-green-400 tracking-widest">
+          MAMMOTH TERMINAL v2.0
         </h1>
+        <p class="text-xs text-green-600 mt-1">LIVE ON-CHAIN DATA // FORMA NETWORK</p>
       </div>
 
-      <!-- FULL WIDTH CHART -->
-      <div class="panel mb-2 h-[400px]">
-        <div class="panel-header">PRICE CHART</div>
-        <div class="panel-content p-0 h-full">
+      <!-- CHART PANEL -->
+      <div class="panel mb-4" style="height: 400px;">
+        <div class="panel-header">PRICE ANALYSIS</div>
+        <div class="panel-content p-0" style="height: calc(100% - 28px);">
           <GraphPanel />
         </div>
       </div>
 
-      <!-- 3 PANEL GRID -->
-      <div class="grid grid-cols-3 gap-2">
-        <div class="panel">
-          <div class="panel-header">LIVE SALES</div>
+      <!-- GRID -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- LIVE FEED -->
+        <div class="panel" style="min-height: 300px;">
+          <div class="panel-header">ACTIVITY MONITOR</div>
           <div class="panel-content">
             <LiveFeed />
           </div>
         </div>
 
-        <div class="panel">
-          <div class="panel-header">LIVE STATS</div>
+        <!-- STATS -->
+        <div class="panel" style="min-height: 300px;">
+          <div class="panel-header">SYSTEM STATUS</div>
           <div class="panel-content">
             <StatsPanel />
           </div>
         </div>
 
-        <div class="panel">
-          <div class="panel-header">TOP HOLDERS</div>
+        <!-- MINTERS -->
+        <div class="panel" style="min-height: 300px;">
+          <div class="panel-header">TOP MINTERS</div>
           <div class="panel-content">
             <HoldersTable />
           </div>
         </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="text-center mt-4 text-xs text-green-700">
+        <p>CONTRACT: 0xbE25A97896b9CE164a314C70520A4df55979a0c6</p>
+        <p class="mt-1">DATA PROVIDED BY MODULARIUM API</p>
       </div>
     </div>
   </body>

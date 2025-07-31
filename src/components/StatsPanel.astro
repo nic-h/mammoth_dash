@@ -1,9 +1,9 @@
 ---
 type Stats = {
-  floorPrice: number;
-  avgSalePrice: number;
-  totalSalesVolume: number;
-  totalSalesQty: number;
+  floorPrice: string;
+  avgSalePrice: string;
+  totalSalesVolume: string;
+  totalSalesQty: string;
   holders: number;
   numListed: number;
   totalSupply: number;
@@ -13,18 +13,29 @@ const res = await fetch("https://api.modularium.art/collection/0xbE25A97896b9CE1
 if (!res.ok) throw new Error(`Stats fetch failed: ${res.status}`);
 const stats = (await res.json()) as Stats;
 
+// Convert wei to TIA - handle potential null/undefined values
+const weiToTia = (wei: string | null | undefined) => {
+  if (!wei || wei === "0") return "0.00";
+  try {
+    const num = Number(wei) / 1e18;
+    return num.toFixed(2);
+  } catch {
+    return "0.00";
+  }
+};
+
 const listedPct =
   stats.totalSupply > 0 ? ((stats.numListed / stats.totalSupply) * 100).toFixed(2) : "0.00";
 ---
 
 <div>
-  <h2 class="text-sm font-bold mb-2">Live Stats</h2>
-  <ul class="space-y-1 text-xs">
-    <li>• Floor Price: {stats.floorPrice} TIA</li>
-    <li>• Avg Sale Price: {stats.avgSalePrice} TIA</li>
-    <li>• Total Volume: {stats.totalSalesVolume} TIA</li>
-    <li>• Sales Count: {stats.totalSalesQty}</li>
-    <li>• Holders: {stats.holders}</li>
-    <li>• % Listed: {listedPct}%</li>
+  <h2 class="text-sm font-bold mb-2">SYSTEM STATS</h2>
+  <ul class="space-y-1 text-xs font-mono">
+    <li>FLOOR_PRICE......... {weiToTia(stats.floorPrice)} TIA</li>
+    <li>AVG_SALE_PRICE...... {weiToTia(stats.avgSalePrice)} TIA</li>
+    <li>TOTAL_VOLUME........ {weiToTia(stats.totalSalesVolume)} TIA</li>
+    <li>SALES_COUNT......... {stats.totalSalesQty}</li>
+    <li>HOLDERS............. {stats.holders}</li>
+    <li>LISTED_PCT.......... {listedPct}%</li>
   </ul>
 </div>

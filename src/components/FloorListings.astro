@@ -1,0 +1,41 @@
+---
+type Listing = {
+  tokenId: string;
+  seller: string;
+  price: string;
+  timestamp: number;
+};
+
+const res = await fetch("https://api.modularium.art/collection/0xbE25A97896b9CE164a314C70520A4df55979a0c6/listings");
+if (!res.ok) throw new Error("Listings fetch failed");
+const listings = (await res.json()) as Listing[];
+
+// Get cheapest listings
+const cheapest = listings
+  .map(l => ({
+    ...l,
+    priceInTia: Number(l.price) / 1e18
+  }))
+  .sort((a, b) => a.priceInTia - b.priceInTia)
+  .slice(0, 5);
+
+const formatAddress = (addr: string) => {
+  if (addr.length > 10) {
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+  }
+  return addr;
+};
+---
+
+<div>
+  <h2 class="text-sm font-bold mb-2">FLOOR LISTINGS</h2>
+  <ul class="space-y-1 text-xs font-mono">
+    {cheapest.map((l) => (
+      <li class="flex justify-between">
+        <span>#{l.tokenId}</span>
+        <span class="text-green-400">{l.priceInTia.toFixed(2)} TIA</span>
+        <span class="text-green-600">{formatAddress(l.seller)}</span>
+      </li>
+    ))}
+  </ul>
+</div>
