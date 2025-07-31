@@ -1,0 +1,50 @@
+---
+type Holder = {
+  owner: string;
+  balance: string;
+};
+
+type Stats = {
+  totalSupply: number;
+};
+
+const resStats = await fetch("https://api.modularium.art/collection/0xbE25A97896b9CE164a314C70520A4df55979a0c6/stats");
+const resHolders = await fetch("https://api.modularium.art/collection/0xbE25A97896b9CE164a314C70520A4df55979a0c6/holders");
+
+if (!resStats.ok || !resHolders.ok) throw new Error("Holders fetch failed");
+
+const { totalSupply } = (await resStats.json()) as Stats;
+const holders = (await resHolders.json()) as Holder[];
+
+const parsed = holders
+  .filter((h) => Number(h.balance) > 0)
+  .sort((a, b) => Number(b.balance) - Number(a.balance))
+  .slice(0, 25);
+---
+
+<div>
+  <h2 class="text-sm font-bold mb-2">Top Holders</h2>
+  <table class="w-full text-xs">
+    <thead>
+      <tr class="text-terminal-text border-b border-green-900">
+        <th class="text-left py-1">Address</th>
+        <th class="text-right py-1">Amount</th>
+        <th class="text-right py-1">% Supply</th>
+      </tr>
+    </thead>
+    <tbody>
+      {parsed.map((h) => {
+        const pct = (Number(h.balance) / totalSupply) * 100;
+        return (
+          <tr class="border-b border-green-900">
+            <td class="py-1">{h.owner}</td>
+            <td class="py-1 text-right">{h.balance}</td>
+            <td class="py-1 text-right">
+              {pct >= 0.01 ? `${pct.toFixed(2)}%` : "<0.01%"}
+            </td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,22 @@
+---
+import Feed from "./react/Feed.jsx";
+
+type ActivityEvent = {
+  event: string;
+  orderType: string;
+  tokenId: string;
+  price: number;
+  timestamp: number;
+};
+
+const res = await fetch("https://api.modularium.art/collection/0xbE25A97896b9CE164a314C70520A4df55979a0c6/activity");
+if (!res.ok) throw new Error(`Activity fetch failed: ${res.status}`);
+const raw = (await res.json()) as ActivityEvent[];
+
+const data = raw.filter((e) => e.event === "TAKE" && e.orderType === "SELL");
+---
+
+<div>
+  <h2 class="text-sm font-bold mb-2">Live Sales</h2>
+  <Feed client:only="react" data={data} />
+</div>

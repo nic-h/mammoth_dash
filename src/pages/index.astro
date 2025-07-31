@@ -1,11 +1,61 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import "../styles/global.css";
+import StatsPanel from "../components/StatsPanel.astro";
+import GraphPanel from "../components/GraphPanel.astro";
+import LiveFeed from "../components/LiveFeed.astro";
+import HoldersTable from "../components/HoldersTable.astro";
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mammoths Dash</title>
+    <script>
+      setInterval(() => {
+        location.reload();
+      }, 5 * 60 * 1000); // 5 minutes
+    </script>
+  </head>
+  <body>
+    <div class="terminal p-2">
+      <!-- HEADER -->
+      <div class="border border-terminal-border text-center mb-2 p-2">
+        <h1 class="text-xl font-bold text-terminal-text tracking-wider">
+          MAMMOTH DASHBOARD v2.0
+        </h1>
+      </div>
+
+      <!-- FULL WIDTH CHART -->
+      <div class="panel mb-2 h-[400px]">
+        <div class="panel-header">PRICE CHART</div>
+        <div class="panel-content p-0 h-full">
+          <GraphPanel />
+        </div>
+      </div>
+
+      <!-- 3 PANEL GRID -->
+      <div class="grid grid-cols-3 gap-2">
+        <div class="panel">
+          <div class="panel-header">LIVE SALES</div>
+          <div class="panel-content">
+            <LiveFeed />
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">LIVE STATS</div>
+          <div class="panel-content">
+            <StatsPanel />
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">TOP HOLDERS</div>
+          <div class="panel-content">
+            <HoldersTable />
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

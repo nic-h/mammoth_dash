@@ -1,0 +1,30 @@
+---
+type Stats = {
+  floorPrice: number;
+  avgSalePrice: number;
+  totalSalesVolume: number;
+  totalSalesQty: number;
+  holders: number;
+  numListed: number;
+  totalSupply: number;
+};
+
+const res = await fetch("https://api.modularium.art/collection/0xbE25A97896b9CE164a314C70520A4df55979a0c6/stats");
+if (!res.ok) throw new Error(`Stats fetch failed: ${res.status}`);
+const stats = (await res.json()) as Stats;
+
+const listedPct =
+  stats.totalSupply > 0 ? ((stats.numListed / stats.totalSupply) * 100).toFixed(2) : "0.00";
+---
+
+<div>
+  <h2 class="text-sm font-bold mb-2">Live Stats</h2>
+  <ul class="space-y-1 text-xs">
+    <li>• Floor Price: {stats.floorPrice} TIA</li>
+    <li>• Avg Sale Price: {stats.avgSalePrice} TIA</li>
+    <li>• Total Volume: {stats.totalSalesVolume} TIA</li>
+    <li>• Sales Count: {stats.totalSalesQty}</li>
+    <li>• Holders: {stats.holders}</li>
+    <li>• % Listed: {listedPct}%</li>
+  </ul>
+</div>
